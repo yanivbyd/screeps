@@ -44,6 +44,19 @@ function spawnNeededCreeps(spawn)
     }
 }
 
+function constructBuildings(room, spawn)
+{
+    if (room.find(FIND_CONSTRUCTION_SITES).length > 0) return;
+    if (room.controller.level >= 3) {
+        let structures = room.find(FIND_MY_STRUCTURES);
+        let towers = _.filter(structures, (structure) => structure instanceof StructureTower).length;
+        if (towers < 1) {
+            let res = room.createConstructionSite(spawn.pos.x-5, spawn.pos.y-5, STRUCTURE_TOWER);
+            general.testResult(res, "createConstructionSite for creating a tower");
+        }
+    }
+}
+
 module.exports.loop = function()
 {
     var spawn = Game.spawns[SPAWN_NAME];
@@ -52,6 +65,9 @@ module.exports.loop = function()
     }
     if (Game.time % 10 === 0) {
         spawnNeededCreeps(spawn);
+    }
+    if (Game.time % 10 === 1) {
+        constructBuildings(spawn.room, spawn);
     }
 
     for(var name in Game.creeps) {
@@ -65,5 +81,3 @@ module.exports.loop = function()
         }
     }
 };
-
-// Game.spawns['Spawn1'].room.createConstructionSite( 23, 22, STRUCTURE_TOWER );
