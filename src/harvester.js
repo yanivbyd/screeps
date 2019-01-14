@@ -11,8 +11,17 @@ var harvester = {
             }
         }
         else {
-            if(creep.transfer(spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(spawn);
+            let res = creep.transfer(spawn, RESOURCE_ENERGY);
+            switch (res) {
+            case OK:
+                general.debug('spawn energy %d out of %d', spawn.energy, spawn.energyCapacity);
+                if (spawn.energy == spawn.energyCapacity) {
+                    console.log('Spawn is full of energy :-)');
+                }
+                break;
+            case ERR_NOT_IN_RANGE:
+                creep.moveTo(spawn, {visualizePathStyle: {stroke: '#ffffff'}});
+                break;
             }
         }
     }
