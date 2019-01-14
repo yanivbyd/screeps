@@ -6,15 +6,23 @@ var general = require('general');
 var SPAWN_NAME = "Spawn1";
 
 var PARTS_BY_ROLE = {
-    harvester: [WORK,CARRY,MOVE],
-    upgrader: [WORK,CARRY,MOVE],
+    0: [WORK,CARRY,MOVE],
+    1: [WORK,CARRY,MOVE],
+    2: [WORK,CARRY,MOVE]
 };
 
 var ROLES = {
     HARVESTER: 0,
     UPGRADER: 1,
-    BUILDER: 2,
+    BUILDER: 2
 };
+
+function spawnCreep(spawn, role, roleName)
+{
+    let res = spawn.spawnCreep(PARTS_BY_ROLE[role], 'c' + Game.time,
+        { memory: { role: role} });
+    if (res == ERR_NOT_ENOUGH_ENERGY) console.log("not enough energy to spawn %s", roleName);
+}
 
 function spawnNeededCreeps(spawn)
 {
@@ -26,16 +34,13 @@ function spawnNeededCreeps(spawn)
 
     general.debug('#harvesters='+harvesters+' #upgraders='+upgraders);
     if (harvesters < 1 || (upgraders >= 1 && harvesters < 3)) {
-        let res = spawn.spawnCreep(PARTS_BY_ROLE.harvester, 'c' + Game.time,
-            { memory: { role: ROLES.HARVESTER} });
-        if (res == ERR_NOT_ENOUGH_ENERGY) console.log("not enough energy to spawn harvester");
-        return;
+        return spawnCreep(spawn, ROLES.HARVESTER, "harvester");
+    }
+    if (builders < 1) {
+        return spawnCreep(spawn, ROLES.BUILDER, "builder");
     }
     if (upgraders < 2) {
-        let res = spawn.spawnCreep(PARTS_BY_ROLE.harvester, 'c' + Game.time,
-            { memory: { role: ROLES.UPGRADER} });
-        if (res == ERR_NOT_ENOUGH_ENERGY) console.log("not enough energy to spawn upgrader");
-        return;
+        return spawnCreep(spawn, ROLES.UPGRADER, "upgrader");
     }
 }
 
