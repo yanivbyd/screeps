@@ -1,4 +1,4 @@
-var IN_DEBUG_MODE = true;
+var IN_DEBUG_MODE = false;
 
 var general = {
     debug: function(msg) {
